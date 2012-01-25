@@ -1,0 +1,22 @@
+.hex-col, .hex-addresses{
+	float: left;
+	font-family: monospace;
+	margin-right: 5px;
+}
+.hex-addresses{
+	background-color: #EEEEEE;
+	font-weight: bold;
+}
+.hex-col-even{
+
+}
+.hex-col-odd{
+	background-color: #EEEEFF;
+}
+.hex-chunk{
+	display:block;
+}
+.hover-footer{
+	background-color: #EFEFEF;
+	clear: both;
+}
