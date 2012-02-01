@@ -13,8 +13,14 @@
 .hex-col-odd{
 	background-color: #EEEEFF;
 }
-.hex-chunk{
+.hex-byte{
+	padding: 0 2px;
+}
+.hex-address,.hex-chunk{
 	display:block;
+}
+.hex-chunk.over{
+	background-color: #AAFFAA;
 }
 .hover-footer{
 	background-color: #EFEFEF;
