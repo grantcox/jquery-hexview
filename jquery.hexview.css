@@ -1,11 +1,20 @@
+.hex-viewer{
+	font-family: monospace;
+}
 .hex-col, .hex-addresses{
 	float: left;
-	font-family: monospace;
 	margin-right: 5px;
 }
 .hex-addresses{
 	background-color: #EEEEEE;
 	font-weight: bold;
+}
+.hex-ascii{
+	margin-left: 15px;
+	float: left;
+}
+.hex-ascii-col{
+	float: left;
 }
 .hex-col-even{
 
@@ -13,16 +22,32 @@
 .hex-col-odd{
 	background-color: #EEEEFF;
 }
+.hex-ascii-col-even{
+
+}
+.hex-ascii-col-odd{
+	background-color: #EEEEEE;
+}
 .hex-byte{
 	padding: 0 2px;
 }
-.hex-address,.hex-chunk{
+.hex-ascii-byte{
+	padding: 0 1px;
+}
+.hex-address, .hex-chunk, .hex-ascii-chunk{
 	display:block;
 }
 .hex-chunk.over{
 	background-color: #AAFFAA;
 }
-.hover-footer{
+.hex-ascii-chunk.over{
+	background-color: #AAFFAA;
+}
+.hex-hover-footer{
 	background-color: #EFEFEF;
+	clear: both;
+}
+.hex-history-line{
+	display: block;
 	clear: both;
 }

@@ -3,17 +3,21 @@
 		var settings = $.extend( {
 			'bytesPerColumn': 4,
 			'columns': 4,
-			'address': 1280,
+			'address': 0,
 			'showAddress': true,
+			'showAscii': true,
 			'littleEndian': true,
-			'hover': {'decimal': true, 'binary':true, 'address':true}
+			'hover': {'address':true, 'hex':true, 'decimal':true, 'binary':false},
+			'selectHistory': true
 		}, options);
 		var i;
 		
 		var bytes = this.text().match(RegExp('[0-9A-Fa-f]{2}\s?','g'));
-		var cols = [];
+		var hex_cols = [];
+		var ascii_cols = [];
 		
-		this.html('')
+		this.html('');
+		this.addClass('hex-viewer');
 		
 		var start_address = 0 + settings.address;
 		var rowsize = settings.bytesPerColumn * settings.columns;
@@ -33,52 +37,132 @@
 		
 		// add the columns for the chunks
 		for (i=0; i<settings.columns; i++){
-			var d = $('<div/>', {
+			var hexCol = $('<div/>', {
 				'class': 'hex-col ' + (i%2==0 ? 'hex-col-even' : 'hex-col-odd')
 			});
-			cols.push(d);
-			this.append(d);
+			hex_cols.push(hexCol);
+			this.append(hexCol);
+		}
+		
+		if (settings.showAscii){
+			var asciiHolder = $('<div/>', {
+				'class': 'hex-ascii'
+			});
+			this.append(asciiHolder);
+			
+			for (i=0; i<settings.columns; i++){
+				var asciiCol = $('<div/>', {
+					'class': 'hex-ascii-col ' + (i%2==0 ? 'hex-ascii-col-even' : 'hex-ascii-col-odd')
+				});
+				ascii_cols.push(asciiCol);
+				asciiHolder.append(asciiCol);
+			}
 		}
 		
 		// add the bytes to chunks, and the chunks to columns
 		var chunkSpan;
+		var asciiSpan;
 		for (i=0; i<bytes.length; i++){
 			if (i % settings.bytesPerColumn == 0){
 				chunkSpan = $('<span/>', {
-					'class': 'hex-chunk'
+					'class': 'hex-chunk chunk'+(start_address + i)
 				});
 				chunkSpan.data('address', (start_address + i));
+				var col_index = (i % rowsize) / settings.bytesPerColumn;
+				hex_cols[col_index].append(chunkSpan);
 				
-				console.log(i, settings.bytesPerColumn, (i % settings.bytesPerColumn), rowsize, (i % rowsize), settings.columns);
-				
-				cols[(i % rowsize) / settings.bytesPerColumn].append(chunkSpan);
+				if (settings.showAscii){
+					asciiSpan = $('<span/>', {
+						'class': 'hex-ascii-chunk chunk'+(start_address + i)
+					});
+					asciiSpan.data('address', (start_address + i));
+					ascii_cols[col_index].append(asciiSpan);
+				}
 			}
 			var byteSpan = $('<span/>', {
 				'class': 'hex-byte',
 				'text': bytes[i]
 			});
 			chunkSpan.append(byteSpan);
+			
+			if (settings.showAscii){
+				var asciiByte = $('<span/>', {
+					'class': 'hex-ascii-byte',
+					'text': str(bytes[i])
+				});
+				asciiSpan.append(asciiByte);
+			}
+		}
+		
+		function str(hex){
+			strRep = '.';
+			var num = parseInt(hex, 16);
+			if (num >= 32){
+				strRep = String.fromCharCode(num);
+			}
+			return strRep;
+		}
+		
+		function lpad(str, pad, length) {
+			while (str.length < length){
+				str = pad + str;
+			}
+			return str;
+		}
+		
+		function chunkString(span){
+			var stringRep = span.text()
+			if (settings.littleEndian){
+				stringRep = ''
+				$.each(span.children().get().reverse(),
+					function(i, v){stringRep += $(v).text();}
+				);
+			}
+			return stringRep;
+		}
+		
+		function hoverString(span){
+			var stringRep = chunkString(span);
+			var num = parseInt(stringRep, 16);
+			var hoverString = "";
+			
+			if (settings.hover.address)
+				hoverString += "@" + span.data('address') + ' '
+			if (settings.hover.hex)
+				hoverString += '0x' + stringRep + ' '
+			if (settings.hover.decimal)
+				hoverString += 'dec: ' + num.toString(10) + ' '
+			if (settings.hover.binary)
+				hoverString += 'bin: ' + lpad(num.toString(2), '0', settings.bytesPerColumn * 8) + ' '
+			
+			return hoverString;
 		}
 		
 		// and if we need any hover functionality, add that
 		if (settings.hover) {
-			this.append('<div class="hover-footer">sd</div>');
+			this.append('<div class="hex-hover-footer"></div>');
 			this.find('span.hex-chunk').hover(function(e){
 				$(this).addClass('over');
-				
-				var stringRep = $(this).text()
-				if (settings.littleEndian){
-					stringRep = ''
-					$.each($(this).children().get().reverse(),
-						function(i, v){stringRep += $(v).text();}
-					);
-				}
-				var val = parseInt(stringRep, 16);
-				var hover_string = "@" + $(this).data('address') + ' 0x' + stringRep + ' bin: ' + val.toString(2) + ' dec: ' + val.toString(10);
-				$(".hover-footer").text(hover_string);
+				// show the hover text
+				$(".hex-hover-footer").text(hoverString($(this)));
+				// and highlight the ascii
+				$('.hex-ascii .chunk' + $(this).data('address')).addClass('over');
 			},function(){
 				$(this).removeClass('over');
-			})
+				$('.hex-ascii-chunk.over').removeClass('over');
+			});
+		}
+		
+		// and the select history
+		if (settings.selectHistory){
+			this.append('<div class="hex-history-footer"></div>');
+			this.find('span.hex-chunk').click(function(e){
+				var historySpan = $('<span/>', {
+					'class': 'hex-history-line',
+					'text': hoverString($(this))
+				});
+				$(".hex-history-footer").append(historySpan);
+			});
 		}
 	};
 })( jQuery );
