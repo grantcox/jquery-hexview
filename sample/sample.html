@@ -5,16 +5,24 @@
 	<title>jQuery HexView plugin sample</title>
 	<link rel="stylesheet" href="reset.css" type="text/css" />
 	<link rel="stylesheet" href="../jquery.hexview.css" type="text/css" />
+	<link rel="stylesheet" href="sample.css" type="text/css" />
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 	<script src="../jquery.hexview.js"></script>
 <script type="text/javascript">                                         
 $(document).ready(function() {
-	$('#hex').hexView({'address':30400});
+	$('#hex1').hexView({'address':30400, 'bytesPerColumn':4, 'columns':4});
+	
+	function stringXOR(num){
+		return 'XOR: ' + String.fromCharCode(num^0x7E);
+	}
+	$('#hex2').hexView({'address':30592, 'bytesPerColumn':2, 'columns':8, 'hover':{'custom':stringXOR, 'address':true, 'decimal':true}});
 });
 </script> 
 </head>
 <body>
-	<div id="hex">2D 00 36 00 4C 04 00 00 53 69 64 65 31 4C 61 6E 67 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 20 00 E4 03 00 00 14 00 2E 00 31 00 2C 00 2A 00 2B 00 39 00 2B 00 3B 00 2D 00 3B 00 21 00 3C 00 2C 00 3F 00 24 00 37 00 32 00 37 00 3F 00 30 00 00 00 7C 04 00 00 53 69 64 65 32 4C 61 6E 67 00 00 00 00 00 00 00</div>
+	<div id="hex1">D39F41D2AF5EAD9CE17FFFD9800800000100000090080000CC080000D0080000580900005C0900006009000064090000680900006C090000A4480000000000006C11010001000000FBC11E4ACC760000</div>
+	
+	<div id="hex2">50 00 00 00 00 00 00 00 49 00 42 00 32 00 3F 00 30 00 39 00 2B 00 3F 00 39 00 3B 00 5E 00 17 00 1A 00 43 00 5C 00 3B 00 30 00 39 00 32 00 37 00 2D 00 36 00 5C 00 40 00 34 00 9F 00 5E 00 08 00</div>
 
 </body>
 </html>

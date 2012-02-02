@@ -1,0 +1,28 @@
+#hex1{
+	font-size: 18px;
+	width: 740px;
+	margin: 0 auto;
+	padding: 40px;
+	border: 2px solid #333;
+	background-color: #FAFAFA;
+}
+
+#hex1 .hex-history-footer{
+	font-size: 14px;
+	margin: 10px 0 0 80px;
+}
+
+
+#hex2{
+	font-size: 14px;
+	width: 740px;
+	margin: 40px auto 0;
+	padding: 20px;
+	border: 2px solid #333;
+	background-color: #FAFAFA;
+}
+
+#hex2 .hex-history-footer{
+	font-size: 14px;
+	margin: 10px 0 0 80px;
+}
