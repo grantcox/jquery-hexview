@@ -1,4 +1,5 @@
 (function( $ ) {
+	"use strict";
 	$.fn.hexView = function(options) {
 		var settings = $.extend( {
 			'bytesPerColumn': 1,
@@ -12,12 +13,12 @@
 		}, options);
 		
 		function ascii(hex){
-			strRep = '.';
+			var str = '.';
 			var num = parseInt(hex, 16);
 			if (num >= 32){
-				strRep = String.fromCharCode(num);
+				str = String.fromCharCode(num);
 			}
-			return strRep;
+			return str;
 		}
 		
 		function lpad(str, pad, length) {
@@ -28,33 +29,39 @@
 		}
 		
 		function chunkString(span){
-			var stringRep = span.text()
+			var stringRep = span.text();
 			if (settings.littleEndian){
-				stringRep = ''
+				stringRep = '';
 				$.each(span.children().get().reverse(),
 					function(i, v){stringRep += $(v).text();}
 				);
 			}
+			stringRep = stringRep.replace(/\s/, '');
 			return stringRep;
 		}
 		
 		function hoverString(span){
 			var stringRep = chunkString(span);
 			var num = parseInt(stringRep, 16);
-			var hoverString = "";
+			var str = "";
 			
-			if (settings.hover.address)
-				hoverString += "@" + span.data('address') + ' '
-			if (settings.hover.hex)
-				hoverString += '0x' + stringRep + ' '
-			if (settings.hover.decimal)
-				hoverString += 'dec: ' + num.toString(10) + ' '
-			if (settings.hover.binary)
-				hoverString += 'bin: ' + lpad(num.toString(2), '0', settings.bytesPerColumn * 8) + ' '
-			if (settings.hover.custom)
-				hoverString += settings.hover.custom(num)
+			if (settings.hover.address){
+				str += "@" + span.data('address') + ' ';
+			}
+			if (settings.hover.hex){
+				str += '0x' + stringRep + ' ';
+			}
+			if (settings.hover.decimal){
+				str += 'dec: ' + num.toString(10) + ' ';
+			}
+			if (settings.hover.binary){
+				str += 'bin: ' + lpad(num.toString(2), '0', settings.bytesPerColumn * 8) + ' ';
+			}
+			if (settings.hover.custom){
+				str += settings.hover.custom(num);
+			}
 			
-			return hoverString;
+			return str;
 		}
 		
 		var top = this;
@@ -62,7 +69,7 @@
 		// and redisplay as columns
 		var i;
 		
-		var bytes = this.text().match(RegExp('[0-9A-Fa-f]{2}\s*','g'));
+		var bytes = this.text().match(/[0-9A-Fa-f]{2}\s*/g);
 		var hex_cols = [];
 		
 		this.addClass('hex-viewer').html('');
@@ -90,7 +97,7 @@
 		this.append(hexColumns);
 		for (i=0; i<settings.columns; i++){
 			var hexCol = $('<div/>', {
-				'class': 'hex-col ' + (i%2==0 ? 'hex-col-even' : 'hex-col-odd')
+				'class': 'hex-col ' + ((i%2)===0 ? 'hex-col-even' : 'hex-col-odd')
 			});
 			hex_cols.push(hexCol);
 			hexColumns.append(hexCol);
@@ -99,7 +106,7 @@
 		// add the bytes to chunks, and the chunks to columns
 		var chunkSpan;
 		for (i=0; i<bytes.length; i++){
-			if (i % settings.bytesPerColumn == 0){
+			if ((i % settings.bytesPerColumn) === 0){
 				chunkSpan = $('<span/>', {
 					'class': 'hex-chunk chunk'+(start_address + i)
 				});
@@ -123,7 +130,7 @@
 			var ascii_cols = [];
 			for (i=0; i<settings.columns; i++){
 				var asciiCol = $('<div/>', {
-					'class': 'hex-ascii-col ' + (i%2==0 ? 'hex-ascii-col-even' : 'hex-ascii-col-odd')
+					'class': 'hex-ascii-col ' + ((i%2)===0 ? 'hex-ascii-col-even' : 'hex-ascii-col-odd')
 				});
 				ascii_cols.push(asciiCol);
 				asciiHolder.append(asciiCol);
@@ -131,7 +138,7 @@
 			
 			var asciiSpan;
 			for (i=0; i<bytes.length; i++){
-				if (i % settings.bytesPerColumn == 0){
+				if ((i % settings.bytesPerColumn) === 0){
 					asciiSpan = $('<span/>', {
 						'class': 'hex-ascii-chunk chunk'+(start_address + i)
 					});
